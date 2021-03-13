@@ -7,13 +7,6 @@ const JsonData = require('./middleware/JsonData')
 const app = new Koa()
 const router = new Router()
 
-router.get('/', async ctx => {
-    ctx.body = {
-        message: 'index page',
-        status: 'success'
-    }
-})
-
 router.use('/api/hello', require('./router/HelloRouter').routes())
 
 app.use(async (ctx, next) => {
