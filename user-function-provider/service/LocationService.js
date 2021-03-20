@@ -16,5 +16,20 @@ module.exports = {
                 message: '服务器忙.'
             }
         }
+    },
+    async getAllLocation(id) {
+        const ret = await locationDao.getAllLocation(id)
+        if (ret) {
+            return {
+                code: 200,
+                message: '查询成功.',
+                data: ret
+            }
+        } else {
+            return {
+                code: 500,
+                message: '服务器忙.'
+            }
+        }
     }
 }

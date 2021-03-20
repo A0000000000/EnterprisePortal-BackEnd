@@ -3,7 +3,7 @@ const router = new Router()
 const locationService = require('../service/LocationService')
 const userService = require('../service/UserService')
 
-router.post('/addNew', async ctx => {
+router.post('/addNewLocation', async ctx => {
     // 加载用户信息
     const token = ctx.request.header.token
     const data = await userService.paserToken(token)
@@ -24,6 +24,15 @@ router.post('/addNew', async ctx => {
         details: params.details,
         createTime: Date.now()
     })
+})
+
+router.get('/getAllLocation', async ctx => {
+    const token = ctx.request.header.token
+    const data = await userService.paserToken(token)
+    if (data.err) {
+        ctx.body = data
+    }
+    ctx.body = await locationService.getAllLocation(data.data.id)
 })
 
 module.exports = router
