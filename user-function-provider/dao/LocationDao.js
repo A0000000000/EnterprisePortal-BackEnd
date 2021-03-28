@@ -8,5 +8,15 @@ module.exports = {
         return await LocationModel.find({
             userId: id
         })
+    },
+    async updateLocation(params) {
+        return await LocationModel.findOneAndUpdate({
+            id: params.id
+        }, params)
+    },
+    async deleteLocation(id) {
+        return await LocationModel.deleteOne({
+            id
+        })
     }
 }
