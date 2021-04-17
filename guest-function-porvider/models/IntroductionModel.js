@@ -3,6 +3,7 @@ const { mongoose, connect } = require('../mongodb')
 const IntroductionSchema = new mongoose.Schema({
     id: String,
     image: String,
+    type: String,
     contents: [String],
     order: Number
 })

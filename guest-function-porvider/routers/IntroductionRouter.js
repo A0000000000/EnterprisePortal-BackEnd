@@ -1,20 +1,25 @@
 const Router = require('koa-router')
 const router = new Router()
 
-const file = require('../minio/IntroductionFiles')
+const introductionService = require('../service/IntroductionService')
 
-router.get('/getImage', async ctx => {
-    let data = await file.getImage('test')
-    ctx.response.set("content-type", 'image/jpeg')
+const fs = require('fs')
+
+router.get('/getImage/:id', async ctx => {
+    let id = ctx.params.id
+    let type = ctx.query.type
+    let data = await introductionService.getImage(id)
+    ctx.response.set("content-type",  type)
     ctx.flag = true
     ctx.body = data
 })
 
-router.get('/test', async ctx => {
-    ctx.body = {
-        id: 1,
-        message: 'test'
-    }
+
+router.post('/addNewPart', async ctx => {
+    const image = ctx.request.files.image
+    const lines = ctx.request.body.content.split('\n')
+    const order = ctx.request.body.order
+    ctx.body = await introductionService.addNewPart(image, lines, order);
 })
 
 module.exports = router
