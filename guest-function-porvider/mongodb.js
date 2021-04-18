@@ -8,11 +8,11 @@ mongoose.connect(url, {
 let connect = mongoose.connection
 
 connect.on('open', () => {
-    console.log('connect success.')
+    console.log('MongoDB连接成功.')
 })
 
 connect.on('err', err => {
-    console.log('connect failed. reason: ', err)
+    console.log('MongoDB连接失败. 原因: ', err)
 })
 
 module.exports = {

@@ -1,6 +1,6 @@
 let minioClient = require('../minio')
 
-const bucketName = 'introduction'
+const bucketName = 'culture'
 
 minioClient.bucketExists(bucketName).then(flag => {
     if (!flag) {
