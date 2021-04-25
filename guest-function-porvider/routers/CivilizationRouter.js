@@ -4,14 +4,17 @@ const router = new Router()
 const civilizationService = require('../service/CivilizationService')
 
 router.get('/getCivilizations', async ctx => {
-    ctx.body = await civilizationService.getCivilizations()
+    ctx.body = {
+        code: 200,
+        data: await civilizationService.getCivilizations()
+    }
 })
 
 router.post('/addNewCivilization', async ctx => {
     const params = ctx.request.body
     if (!params || !params.year || !params.month || !params.day || !params.content) {
         ctx.body = {
-            status: 'failed',
+            code: 500,
             message: '参数不全.'
         }
     } else {

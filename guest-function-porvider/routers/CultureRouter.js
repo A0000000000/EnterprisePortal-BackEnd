@@ -4,7 +4,10 @@ const router = new Router()
 const cultureService = require('../service/CultureService')
 
 router.get('/getCultures', async ctx => {
-    ctx.body = await cultureService.getCultures()
+    ctx.body = {
+        code: 200,
+        data: await cultureService.getCultures()
+    }
 })
 
 router.get('/getImage/:id', async ctx => {

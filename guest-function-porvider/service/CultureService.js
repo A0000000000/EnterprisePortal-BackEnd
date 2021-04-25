@@ -12,12 +12,12 @@ module.exports = {
             await cultureDao.addNewCultureDao(uuid.v4(), image.name, image.type, title, lines, order)
             await cultureFiles.addImage(image.name, fs.createReadStream(image.path), image.size, image.type)
             return {
-                status: 'success',
+                code: 200,
                 message: '添加成功.'
             }
         } catch (err) {
             return {
-                status: 'failed',
+                code: 500,
                 message: err
             }
         }

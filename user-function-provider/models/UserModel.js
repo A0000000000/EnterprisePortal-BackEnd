@@ -4,11 +4,13 @@ const UserSchema = new mongoose.Schema({
     id: String,
     username: String,
     password: String,
-    role: [],
+    role: String,
     createTime: Date,
-    birthday: Date,
-    status: String,
-    email: String
+    email: String,
+    emailStatus: String,
+    accountStatus: Number,
+    contentType: String,
+    filename: String
 })
 
 

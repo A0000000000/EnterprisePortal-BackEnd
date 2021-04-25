@@ -15,7 +15,7 @@ app.use(Cors())
 
 router.get('/', async ctx => {
     ctx.body = {
-        status: 'success',
+        code: 200,
         message: '成功.',
         data: ServiceMapper
     }
@@ -25,7 +25,7 @@ router.post('/api/register', async ctx => {
     const params = ctx.request.body
     if (!params || !params.name || !params.url || !params.port) {
         ctx.body = {
-            status: 'failed',
+            code: 500,
             message: '参数为空.'
         }
     } else {
@@ -36,7 +36,7 @@ router.post('/api/register', async ctx => {
         }
         console.log(params.name, '注册成功.')
         ctx.body = {
-            status: 'success',
+            code: 200,
             message: '成功.'
         }
     }
@@ -47,12 +47,12 @@ router.get('/api/flush/:name', async ctx => {
     if (ServiceMapper[name]) {
         ServiceMapper[name].time = Date.now()
         ctx.body = {
-            status: 'success',
+            code: 200,
             message: '成功.'
         }
     } else {
         ctx.body = {
-            status: 'failed',
+            code: 500,
             message: '微服务未注册.'
         }
     }
@@ -60,7 +60,7 @@ router.get('/api/flush/:name', async ctx => {
 
 router.get('/api/serviceMapper', async ctx => {
     ctx.body = {
-        status: 'success',
+        code: 200,
         message: '成功.',
         data: ServiceMapper
     }
@@ -70,13 +70,13 @@ router.get('/api/service/:name', async ctx => {
     const name = ctx.params.name
     if (ServiceMapper[name]) {
         ctx.body = {
-            status: 'success',
+            code: 200,
             message: '成功.',
             data: ServiceMapper[name]
         }
     } else {
         ctx.body = {
-            status: 'failed',
+            code: 500,
             message: '微服务不存在.'
         }
     }
@@ -86,7 +86,7 @@ router.get('/api/remove/:name', async ctx => {
     const name = ctx.params.name
     delete ServiceMapper[name]
     ctx.body = {
-        status: 'success',
+        code: 200,
         message: '成功.'
     }
 })
@@ -104,5 +104,5 @@ setInterval(function () {
 app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(8000, function () {
-    console.log('Register is running at http://localhost:8000')
+    console.log('Register Server is running at http://localhost:8000')
 })

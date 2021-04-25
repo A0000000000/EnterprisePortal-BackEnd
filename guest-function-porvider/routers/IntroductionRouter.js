@@ -4,7 +4,10 @@ const router = new Router()
 const introductionService = require('../service/IntroductionService')
 
 router.get('/getIntroductions', async ctx => {
-    ctx.body = await introductionService.getIntroductions()
+    ctx.body = {
+        code: 200,
+        data: await introductionService.getIntroductions()
+    }
 })
 
 router.get('/getImage/:id', async ctx => {

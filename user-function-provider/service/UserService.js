@@ -1,6 +1,9 @@
 const userDao = require('../dao/UserDao')
 const uuid = require('node-uuid')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const md5 = require('md5-node')
+const enterpriseFile = require('../minio/EnterpriseFiles')
 const secret = 'just for fun'
 
 module.exports = {
@@ -14,17 +17,26 @@ module.exports = {
                 message: '用户名已存在.'
             }
         }
+        const id = uuid.v4()
+        if (params.role === 'Enterprise') {
+            await enterpriseFile.addFile(id, fs.createReadStream(params.file.path), params.file.size, params.file.type)
+        }
         // 保存用户信息
-        const ret = await userDao.addNewUser({
-            id: uuid.v4(),
+        let model = {
+            id: id,
             username: params.username,
-            password: params.password,
-            role: [(params.role === 'Enterprise' ? 'ROLE_ENTERPRISE' : 'ROLE_USER')],
+            password: md5(params.password),
+            role: (params.role === 'Enterprise' ? 'ROLE_ENTERPRISE' : 'ROLE_USER'),
             createTime: Date.now(),
-            birthday: params.birthday,
-            status: 'CREATE',
-            email: params.email
-        })
+            email: params.email,
+            emailStatus: 'UnCheck',
+            accountStatus: (params.role === 'Enterprise' ? 0 : 1),
+            contentType: (params.role === 'Enterprise' ? params.file.type : null),
+        }
+        if (params.role === 'Enterprise') {
+            model.filename = params.file.name
+        }
+        const ret = await userDao.addNewUser(model)
         // 判断是否保存成功
         if (ret && ret.username === params.username) {
             return {
@@ -41,7 +53,7 @@ module.exports = {
     async login({ username, password }) {
         const user = await userDao.findByUsername(username)
         // 判断用户名密码是否正确
-        if (!user || user.username !== username || user.password !== password) {
+        if (!user || user.username !== username || user.password !== md5(password)) {
             return {
                 code: 500,
                 message: '用户名或密码错误.'
@@ -57,7 +69,32 @@ module.exports = {
         return {
             code: 200,
             message: '登录成功',
-            data: token
+            data: {
+                token,
+                role: user.role
+            }
+        }
+    },
+    async updateInfo(params, token) {
+        const data = jwt.verify(token, secret)
+        const user = await userDao.findById(data.id)
+        if (!user) {
+            return {
+                code: 500,
+                message: '用户不存在.'
+            }
+        }
+        if (params.password) {
+            user.password = md5(params.password)
+        }
+        if (params.email) {
+            user.email = params.email
+            user.emailStatus = 'UnCheck'
+        }
+        await userDao.updateById(user)
+        return {
+            code: 200,
+            message: '更新成功.'
         }
     },
     async paserToken(token) {
@@ -65,6 +102,7 @@ module.exports = {
             // 解析jwt字符串
             const data = jwt.verify(token, secret)
             const user = await userDao.findById(data.id)
+            user.password = null
             return {
                 code: 200,
                 data: user

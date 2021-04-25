@@ -8,12 +8,12 @@ module.exports = {
         try {
             await civilizationDao.addNewCivilization(model)
             return {
-                status: 'success',
+                code: 200,
                 message: '操作成功.'
             }
         } catch (err) {
             return {
-                status: 'failed',
+                code: 500,
                 message: err
             }
         }
