@@ -5,6 +5,8 @@ mongoose.connect(url, {
     useUnifiedTopology: true
 })
 
+mongoose.set('useFindAndModify', false)
+
 let connect = mongoose.connection
 
 connect.on('open', () => {
