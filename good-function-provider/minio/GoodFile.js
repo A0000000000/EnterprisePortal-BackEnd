@@ -1,6 +1,6 @@
-let minioClient = require('../minio')
+const minioClient = require('../minio')
 
-const bucketName = 'enterprise'
+const bucketName = 'good'
 
 minioClient.bucketExists(bucketName).then(flag => {
     if (!flag) {

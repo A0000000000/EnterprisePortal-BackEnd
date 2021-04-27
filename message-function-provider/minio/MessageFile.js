@@ -1,6 +1,6 @@
 let minioClient = require('../minio')
 
-const bucketName = 'enterprise'
+const bucketName = 'message'
 
 minioClient.bucketExists(bucketName).then(flag => {
     if (!flag) {
@@ -13,18 +13,19 @@ minioClient.bucketExists(bucketName).then(flag => {
 })
 
 module.exports = {
-    async addFile(id, stream, size, contentType) {
+    async addImage(id, stream, size, contentType) {
         return await new Promise((resolve, reject) => {
-            minioClient.putObject(bucketName, id, stream, size, contentType, (err, ret) => {
+            minioClient.putObject(bucketName, id, stream, size, contentType, (err, etag) => {
                 if (err) {
+                    console.log(err)
                     reject(err)
                 } else {
-                    resolve(ret)
+                    resolve(etag)
                 }
             })
         })
     },
-    async getFile(id) {
+    async getImage(id) {
         return await new Promise((resolve, reject) => {
             minioClient.getObject(bucketName, id, (err, data) => {
                 if (err) {
