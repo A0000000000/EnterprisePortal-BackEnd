@@ -15,5 +15,8 @@ module.exports = {
     },
     async getGoodById(id) {
         return await GoodModel.findOne({ id })
+    },
+    async getGoods() {
+        return await GoodModel.find({})
     }
 }

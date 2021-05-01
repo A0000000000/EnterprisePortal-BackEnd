@@ -109,4 +109,22 @@ router.get('/getAllImage', async ctx => {
     }
 })
 
+router.post('/getPrices', async ctx => {
+    const arr = ctx.request.body.goods
+    if (!arr || arr.length === 0) {
+        ctx.body = {
+            code: 200,
+            data: 0
+        }
+    }
+    try {
+        ctx.body = await goodService.caclPrices(arr)
+    } catch (err) {
+        ctx.body = {
+            code: 500,
+            message: err
+        }
+    }
+})
+
 module.exports = router

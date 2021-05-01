@@ -168,5 +168,18 @@ module.exports = {
             code: 200,
             data: await imageDao.getAllImages('content')
         }
+    },
+    async caclPrices(arr) {
+        let goods = await goodDao.getGoods()
+        let ans = 0
+        for (let index in goods) {
+            if (arr.includes(goods[index].id)) {
+                ans += goods[index].price
+            }
+        }
+        return {
+            code: 200,
+            data: ans
+        }
     }
 }

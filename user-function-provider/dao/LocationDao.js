@@ -18,5 +18,8 @@ module.exports = {
         return await LocationModel.deleteOne({
             id
         })
+    },
+    async getLocationById(id) {
+        return await LocationModel.findOne({ id })
     }
 }

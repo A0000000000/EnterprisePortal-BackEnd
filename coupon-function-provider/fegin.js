@@ -14,7 +14,7 @@ class Fegin {
                     callback(data.message)
                     console.log('微服务不存在.')
                 } else {
-
+                    
                     const profix = data.data.url + ':' + data.data.port
                     callback(null, profix)
                 }

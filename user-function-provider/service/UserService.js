@@ -5,6 +5,9 @@ const fs = require('fs')
 const md5 = require('md5-node')
 const enterpriseFile = require('../minio/EnterpriseFiles')
 const secret = 'just for fun'
+const FeginClient = require('../fegin')
+
+const couponFegin = new FeginClient('coupon-function-provider', 'http://localhost:8000')
 
 module.exports = {
     async register(params) {
@@ -37,6 +40,22 @@ module.exports = {
             model.filename = params.file.name
         }
         const ret = await userDao.addNewUser(model)
+        // 生成一个token
+        let token = jwt.sign({
+            id: model.id,
+            username: model.username
+        }, secret, {
+            expiresIn: 60 * 60 * 24
+        })
+        // 获取三张新人优惠券
+        await couponFegin.get('/api/couponInfo/registerSendCoupon', {
+            headers: {
+                token
+            }
+        })
+        if (result.code !== 200) {
+            console.log(result.message)
+        }
         // 判断是否保存成功
         if (ret && ret.username === params.username) {
             return {
