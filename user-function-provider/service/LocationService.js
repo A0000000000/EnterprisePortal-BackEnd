@@ -14,6 +14,7 @@ module.exports = {
         if (ret && ret.id === params.id) {
             return {
                 code: 200,
+                data: params.id,
                 message: '添加成功.'
             }
         } else {
@@ -58,6 +59,24 @@ module.exports = {
         return {
             code: 500,
             message: '权限不足.'
+        }
+    },
+    async getLocationById(token, id) {
+        const data = await userService.paserToken(token)
+        if (data.code !== 200) {
+            return data
+        }
+        const model = await locationDao.getLocationById(id)
+        if (model.userId === data.data.id) {
+            return {
+                code: 200,
+                data: model
+            }
+        } else {
+            return {
+                code: 500,
+                message: '权限不足.'
+            }
         }
     }
 }

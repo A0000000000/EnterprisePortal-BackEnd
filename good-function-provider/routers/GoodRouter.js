@@ -127,4 +127,24 @@ router.post('/getPrices', async ctx => {
     }
 })
 
+router.post('/subPrice', async ctx => {
+    const token = ctx.request.header.token
+    const goods = ctx.request.body.goods
+    if (!token || !goods || goods.length === 0) {
+        ctx.body = {
+            code: 500,
+            message: '参数不足.'
+        }
+        return
+    }
+    try {
+        ctx.body = await goodService.subGoods(token, goods)
+    } catch (err) {
+        ctx.body = {
+            code: 500,
+            message: err
+        }
+    }
+})
+
 module.exports = router

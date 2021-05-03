@@ -181,5 +181,39 @@ module.exports = {
             code: 200,
             data: ans
         }
+    },
+    async subGoods(token, goods) {
+        const userResult = await userFegin.get('/api/user/token', {
+            headers: {
+                token
+            }
+        })
+        if (!userResult) {
+            return {
+                code: 500,
+                message: '权限不足.'
+            }
+        }
+        let goodModels = []
+        for (let index in goods) {
+            goodModels.push(await goodDao.getGoodById(goods[index]))
+        }
+        for (let index in goodModels) {
+            if (goodModels[index].count > 0) {
+                goodModels[index].count--
+            } else {
+                return {
+                    code: 500,
+                    message: '库存不足.'
+                }
+            }
+        }
+        for (let index in goodModels) {
+            await goodDao.updateGood(goodModels[index])
+        }
+        return {
+            code: 200,
+            message: '成功.'
+        }
     }
 }
