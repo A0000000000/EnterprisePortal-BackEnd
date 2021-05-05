@@ -25,6 +25,7 @@ router.post('/register', async ctx => {
         }
         ctx.body = await userService.register(params)
     } catch (err) {
+        console.log(err)
         ctx.body = {
             code: 500,
             message: err

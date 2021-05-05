@@ -18,13 +18,13 @@ app.use(router.routes()).use(router.allowedMethods())
 
 const params = {
     name: 'message-function-provider',
-    url: 'http://localhost',
+    url: 'http://192.144.232.33',
     port: '3004'
 }
 
-const url = 'http://localhost:8000'
+const url = 'http://192.144.232.33:8000'
 
 app.listen(3004, function () {
-    console.log('App is running at http://localhost:3004')
+    console.log('App is running at http://192.144.232.33:3004')
     register(url, params)
 })

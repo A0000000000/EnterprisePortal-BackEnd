@@ -18,13 +18,13 @@ app.use(router.routes()).use(router.allowedMethods())
 
 const params = {
     name: 'order-function-provider',
-    url: 'http://localhost',
+    url: 'http://192.144.232.33',
     port: '3007'
 }
 
-const url = 'http://localhost:8000'
+const url = 'http://192.144.232.33:8000'
 
 app.listen(3007, function () {
-    console.log('App is running at http://localhost:3007')
+    console.log('App is running at http://192.144.232.33:3007')
     register(url, params)
 })

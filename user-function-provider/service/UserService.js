@@ -6,7 +6,6 @@ const md5 = require('md5-node')
 const enterpriseFile = require('../minio/EnterpriseFiles')
 const secret = 'just for fun'
 const FeginClient = require('../fegin')
-const { getFile } = require('../minio/EnterpriseFiles')
 
 const couponFegin = new FeginClient('coupon-function-provider', 'http://localhost:8000')
 
@@ -54,9 +53,6 @@ module.exports = {
                 token
             }
         })
-        if (result.code !== 200) {
-            console.log(result.message)
-        }
         // 判断是否保存成功
         if (ret && ret.username === params.username) {
             return {

@@ -1,7 +1,7 @@
 let Minio = require('minio')
 
 let minioClient = new Minio.Client({
-    endPoint: '192.168.99.100',
+    endPoint: 'localhost',
     port: 9000,
     useSSL: false,
     accessKey: 'a00000',

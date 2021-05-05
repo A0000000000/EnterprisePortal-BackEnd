@@ -104,5 +104,5 @@ setInterval(function () {
 app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(8000, function () {
-    console.log('Register Server is running at http://localhost:8000')
+    console.log('Register Server is running at http://192.144.232.33:8000')
 })

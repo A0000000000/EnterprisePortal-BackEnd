@@ -1,5 +1,5 @@
 let mongoose = require('mongoose')
-let url = 'mongodb://A00000:Aa.000000@192.168.99.100:27017/node?authSource=admin'
+let url = 'mongodb://A00000:Aa.000000@localhost:27017/node?authSource=admin'
 mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
