@@ -8,6 +8,9 @@ const userFegin = new Fegin('user-function-provider', 'http://localhost:8000')
 
 module.exports = {
     async getAllGoods(type) {
+        if (type === 'all') {
+            return await goodDao.getGoods()
+        }
         return await goodDao.getAllGoods(type)
     },
     async getGoodById(id) {
@@ -143,6 +146,7 @@ module.exports = {
         await imageDao.addNewImage(imageModel)
         return {
             code: 200,
+            data: imageModel.id,
             message: '上传成功.'
         }
     },

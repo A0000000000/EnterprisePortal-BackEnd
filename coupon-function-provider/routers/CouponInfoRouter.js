@@ -81,4 +81,24 @@ router.get('/getCouponByInfoId/:id', async ctx => {
     }
 })
 
+router.get('/receiveCoupon/:id', async ctx => {
+    try {
+        const token = ctx.request.header.token
+        const id = ctx.params.id
+        if (!token) {
+            ctx.body = {
+                code: 500,
+                message: '请先登录.'
+            }
+            return
+        }
+        ctx.body = await couponInfoService.receiveCoupon(id, token)
+    } catch(err) {
+        ctx.body = {
+            code: 500,
+            message: err
+        }
+    }
+})
+
 module.exports = router

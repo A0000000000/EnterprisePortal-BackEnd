@@ -108,7 +108,7 @@ module.exports = {
             }
         }
         const info = await couponInfoDao.getInfoById(id)
-        if (!info || info.userId !== userResult.id) {
+        if (!info || (info.userId !== userResult.id && userResult.role !== 'ROLE_ADMIN' && userResult.role !== 'ROLE_MANAGER')) {
             return {
                 code: 500,
                 message: '权限不足.'
@@ -117,6 +117,49 @@ module.exports = {
         return {
             code: 200,
             data: await couponDao.getCouponById(info.couponId)
+        }
+    },
+    async receiveCoupon(id, token) {
+        const userResult = await userFegin.get('/api/user/token', {
+            headers: {
+                token
+            }
+        })
+        if (!userResult) {
+            return {
+                code: 500,
+                message: '登录失效, 请重新登录.'
+            }
+        }
+        const coupon = await couponDao.getCouponById(id)
+        const tmp = await couponInfoDao.getInfoByCouponId(userResult.id, coupon.id)
+        if (tmp) {
+            return {
+                code: 500,
+                message: '优惠券已被领取过.'
+            }
+        }
+        if (coupon.count > 0) {
+            coupon.count--
+        } else {
+            return {
+                code: 500,
+                message: '优惠券已被领取完了.'
+            }
+        }
+        await couponDao.updateCoupon(coupon)
+        const couponInfo = {
+            id: uuid.v4(),
+            couponId: coupon.id,
+            userId: userResult.id,
+            status: 0,
+            getTime: Date.now(),
+            useTime: null
+        }
+        await couponInfoDao.addNewInfo(couponInfo)
+        return {
+            code: 200,
+            message: '领取成功.'
         }
     }
 }

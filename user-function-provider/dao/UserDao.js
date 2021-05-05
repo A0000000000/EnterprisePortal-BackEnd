@@ -12,5 +12,8 @@ module.exports = {
     },
     async updateById(model) {
         return await UserModel.findOneAndUpdate({ id: model.id }, model)
+    },
+    async findAll() {
+        return await UserModel.find({})
     }
 }

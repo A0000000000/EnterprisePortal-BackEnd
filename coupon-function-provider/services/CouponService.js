@@ -56,6 +56,7 @@ module.exports = {
         await couponDao.addNewCoupon(model)
         return {
             code: 200,
+            data: model.id,
             message: '添加成功.'
         }
     },

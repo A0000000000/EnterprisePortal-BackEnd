@@ -73,7 +73,7 @@ module.exports = {
             }
         })
         let model = await orderDao.getOrderById(id)
-        if (model.userId !== userResult.id) {
+        if (model.userId !== userResult.id && userResult.role !== 'ROLE_ADMIN' && userResult.role !== 'ROLE_MANAGER') {
             return {
                 code: 500,
                 message: '权限不足.'

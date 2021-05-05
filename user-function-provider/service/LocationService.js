@@ -67,7 +67,7 @@ module.exports = {
             return data
         }
         const model = await locationDao.getLocationById(id)
-        if (model.userId === data.data.id) {
+        if (model.userId === data.data.id || data.data.role === 'ROLE_ADMIN' || data.data.role === 'ROLE_MANAGER') {
             return {
                 code: 200,
                 data: model

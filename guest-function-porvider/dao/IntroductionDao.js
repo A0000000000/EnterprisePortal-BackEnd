@@ -13,5 +13,8 @@ module.exports = {
     },
     async getIntroductions() {
         return await introductionModel.find()
+    },
+    async deleteById(id) {
+        return await introductionModel.findOneAndDelete({ id })
     }
 }

@@ -6,6 +6,7 @@ const md5 = require('md5-node')
 const enterpriseFile = require('../minio/EnterpriseFiles')
 const secret = 'just for fun'
 const FeginClient = require('../fegin')
+const { getFile } = require('../minio/EnterpriseFiles')
 
 const couponFegin = new FeginClient('coupon-function-provider', 'http://localhost:8000')
 
@@ -96,7 +97,13 @@ module.exports = {
     },
     async updateInfo(params, token) {
         const data = jwt.verify(token, secret)
-        const user = await userDao.findById(data.id)
+        const operator = await userDao.findById(data.id)
+        let user = null
+        if (params.id && operator.role === 'ROLE_ADMIN') {
+            user = await userDao.findById(params.id)
+        } else {
+            user = await userDao.findById(data.id)
+        }
         if (!user) {
             return {
                 code: 500,
@@ -131,6 +138,97 @@ module.exports = {
                 code: 500,
                 message: err
             }
+        }
+    },
+    async getAllUser(token) {
+        const user = await userDao.findById(jwt.verify(token, secret).id)
+        if (user.role !== 'ROLE_ADMIN' && user.role != 'ROLE_MANAGER') {
+            return {
+                code: 500,
+                message: '权限不足.'
+            }
+        }
+        let arr = await userDao.findAll()
+        if (user.role === 'ROLE_ADMIN') {
+            return {
+                code: 200,
+                data: arr.filter(item => item.role !== 'ROLE_ADMIN')
+            }
+        } else {
+            return {
+                code: 200,
+                data: arr.filter(item => item.role !== 'ROLE_ADMIN' && item.role !== 'ROLE_MANAGER')
+            }
+        }
+    },
+    async addNewUser(token, params) {
+        const currentUser = await userDao.findById(jwt.verify(token, secret).id)
+        if (currentUser.role !== 'ROLE_ADMIN') {
+            return {
+                code: 500,
+                message: '权限不足.'
+            }
+        }
+        if (!params.username || !params.password || !params.email || !params.role) {
+            return {
+                code: 500,
+                message: '参数不足.'
+            }
+        }
+        const user = await userDao.findByUsername(params.username)
+        if (user && user.username === params.username) {
+            return {
+                code: 500,
+                message: '用户名已存在.'
+            }
+        }
+        const userModel = {
+            id: uuid.v4(),
+            username: params.username,
+            password: md5(params.password),
+            email: params.email,
+            emailStatus: 'UnCheck',
+            role: params.role === 'ROLE_MANAGER' ? 'ROLE_MANAGER' : params.role === 'ROLE_ENTERPRISE' ? 'ROLE_ENTERPRISE' : 'ROLE_USER',
+            createTime: Date.now(),
+            accountStatus: 1,
+            contentType: null,
+            filename: null
+        }
+        await userDao.addNewUser(userModel)
+        return {
+            code: 200,
+            message: '添加成功.'
+        }
+    },
+    async authXMZZ(token, id) {
+        const currentUser = await userDao.findById(jwt.verify(token, secret).id)
+        if (currentUser.role !== 'ROLE_ADMIN' && currentUser.role !== 'ROLE_MANAGER') {
+            return {
+                code: 500,
+                message: '权限不足.'
+            }
+        }
+        const obj = await userDao.findById(id)
+        if (!obj || obj.role !== 'ROLE_ENTERPRISE' || obj.accountStatus !== 0) {
+            return {
+                code: 500,
+                message: '账户无需认证.'
+            }
+        }
+        obj.accountStatus = 1
+        await userDao.updateById(obj)
+        return {
+            code: 200,
+            message: '认证成功.'
+        }
+    },
+    async getFile(id) {
+        let obj = await userDao.findById(id)
+        let file = await enterpriseFile.getFile(id)
+        return {
+            file,
+            filename: obj.filename,
+            contentType: obj.contentType
         }
     }
 }

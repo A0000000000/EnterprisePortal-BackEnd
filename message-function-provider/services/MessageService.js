@@ -136,6 +136,7 @@ module.exports = {
             let res = await messageFile.addImage(image.name, fs.createReadStream(image.path), image.size, image.type)
             return {
                 code: 200,
+                data: fileModel.id,
                 message: '上传成功'
             }
         } catch (err) {
